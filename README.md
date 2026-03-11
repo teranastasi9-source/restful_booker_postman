@@ -1,7 +1,6 @@
 # RESTful Booker API Test Collection - Postman
 
-Purpose: [Postman collection for testing https://restful-booker.herokuapp.com/
-          Portfolio demonstration of API automation skills]
+Purpose: Postman collection for testing https://restful-booker.herokuapp.com/. Portfolio demonstration of API automation skills
 
 ## Project Overview
 |Aspect|Details|
@@ -20,7 +19,7 @@ Purpose: [Postman collection for testing https://restful-booker.herokuapp.com/
 |**Mocking**|Postman Mock Server|`responses` library|
 |**Reports**|HTML via htmlextra|HTML via pytest-html|
 |**Maintainability**|GUI-based|Code-based|
-> Note: Python solution - see restful_booker_automation/ folder
+> Note: Python solution - see restful_booker_automation repository
 
 
 ## This project demonstrates:
@@ -35,12 +34,16 @@ Purpose: [Postman collection for testing https://restful-booker.herokuapp.com/
 
 ##  Project structure
 restful_booker_postman/
-├── README.md
-├── RESTful_Booker.Individual_collections_01_06.json    # includes separate requests required for integration tests
-├── RESTful_Booker.IntegrationWorkflows_07.json         # includes integration workflows created using 'RESTful_Booker.Individual_collections_01_06.json'
-├── run_integration_workflows_07.ps1                    # runs 'RESTful_Booker.IntegrationWorkflows_07.json'
-└──  test_reports/
-    └── report_IntegrationWorkflows_07.html             # generated report from 'RESTful_Booker.IntegrationWorkflows_07.json'
+  - README.md
+  - RESTful_Booker.Individual_collections_01_06.json
+    > includes separate requests required for integration tests
+  - RESTful_Booker.IntegrationWorkflows_07.json
+    > includes integration workflows created using 'RESTful_Booker.Individual_collections_01_06.json'
+  - run_integration_workflows_07.ps1
+    > runs 'RESTful_Booker.IntegrationWorkflows_07.json'
+  test_reports/
+    - report_IntegrationWorkflows_07.html
+      > generated report from 'RESTful_Booker.IntegrationWorkflows_07.json'
 
 
 ## Collection structure in Postman
@@ -212,3 +215,4 @@ Issue: "callback timed out"
 - Anastasiia Zatorska
 - Email: teranastasi9@gmail.com
 - LinkedIn: http://www.linkedin.com/in/anastasiia9-zatorska
+
