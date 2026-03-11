@@ -212,4 +212,3 @@ Issue: "callback timed out"
 - Anastasiia Zatorska
 - Email: teranastasi9@gmail.com
 - LinkedIn: http://www.linkedin.com/in/anastasiia9-zatorska
-- GitHub:
