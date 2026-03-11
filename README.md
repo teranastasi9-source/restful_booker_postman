@@ -19,7 +19,7 @@ Purpose: Postman collection for testing https://restful-booker.herokuapp.com/. P
 |**Mocking**|Postman Mock Server|`responses` library|
 |**Reports**|HTML via htmlextra|HTML via pytest-html|
 |**Maintainability**|GUI-based|Code-based|
-> Note: Python solution - see restful_booker_automation repository
+> Note: Python solution - see [restful_booker_automation repository](https://github.com/teranastasi9-source/restful_booker_automation)
 
 
 ## This project demonstrates:
@@ -215,4 +215,5 @@ Issue: "callback timed out"
 - Anastasiia Zatorska
 - Email: teranastasi9@gmail.com
 - LinkedIn: http://www.linkedin.com/in/anastasiia9-zatorska
+
 
