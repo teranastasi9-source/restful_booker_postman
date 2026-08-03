@@ -1,6 +1,6 @@
 # RESTful Booker API Test Collection - Postman
 
-Purpose: Postman collection for testing https://restful-booker.herokuapp.com/. Portfolio demonstration of API automation skills
+Purpose: Postman collection for testing https://restful-booker.herokuapp.com/. Portfolio demonstration of API automation skills.
 
 ## Project Overview
 |Aspect|Details|
@@ -32,18 +32,17 @@ Purpose: Postman collection for testing https://restful-booker.herokuapp.com/. P
   - Documentation and reproducibility practices
 
 
-##  Project structure
+## Project structure
+```
 restful_booker_postman/
-  - README.md
-  - RESTful_Booker.Individual_collections_01_06.json
-    > includes separate requests required for integration tests
-  - RESTful_Booker.IntegrationWorkflows_07.json
-    > includes integration workflows created using 'RESTful_Booker.Individual_collections_01_06.json'
-  - run_integration_workflows_07.ps1
-    > runs 'RESTful_Booker.IntegrationWorkflows_07.json'
+  docs/report_screenshot.png                       - report screenshot embedded below, for a no-clone preview
+  RESTful_Booker.Individual_collections_01_06.json   - separate requests required for integration tests
+  RESTful_Booker.IntegrationWorkflows_07.json          - integration workflows built from the collection above
+  run_integration_workflows_07.ps1                       - runs IntegrationWorkflows_07.json via Newman
   test_reports/
-    - report_IntegrationWorkflows_07.html
-      > generated report from 'RESTful_Booker.IntegrationWorkflows_07.json'
+    report_IntegrationWorkflows_07.html                    - generated HTML report (Newman htmlextra)
+  README.md
+```
 
 
 ## Collection structure in Postman
@@ -200,6 +199,11 @@ Report includes:
   - Response times
   - Request/response details
   - Summary dashboard
+
+A recent run's report is committed at `test_reports/report_IntegrationWorkflows_07.html` so
+you can see the results without running anything - open it directly in a browser.
+
+![HTML test report](docs/report_screenshot.png)
 
 
 ## Troubleshooting

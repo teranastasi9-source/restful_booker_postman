@@ -1,0 +1,6 @@
+# IDE
+.idea/
+.vscode/
+
+# Windows folder metadata
+desktop.ini
