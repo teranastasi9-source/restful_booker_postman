@@ -208,6 +208,14 @@ you can see the results without running anything - open it directly in a browser
 
 ![HTML test report](docs/report_screenshot.png)
 
+## CI
+
+Runs on every push/PR, plus a daily scheduled run and manual `workflow_dispatch` (see
+`.github/workflows/tests.yml`). The Newman step retries once automatically (see the known
+mock-server flake below). If the **scheduled** run still fails after that retry, a GitHub
+Issue is opened automatically (push/PR/manual runs are already being watched live, so they
+don't) - a "don't let this go unnoticed" safety net.
+
 
 ## Troubleshooting
 Issue: "newman: command not found"
