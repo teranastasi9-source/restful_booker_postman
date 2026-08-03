@@ -217,6 +217,12 @@ Issue: "callback timed out"
   → Check internet connection
   → Increase timeout in *.ps1 scripts
 
+Issue: `update_booking_expired_token_mocked` fails with "expected N to be below 1000"
+  → Postman's own mock server (`restful_booker_mocked`) occasionally responds slowly -
+    verified 2026-08-03 that a failure here was a one-off latency spike, not a real
+    regression (the very next run passed 214/214 with response times back under 900ms).
+    CI retries this step once automatically; locally, just re-run the collection.
+
 
 ## Contact
 - Anastasiia Zatorska
