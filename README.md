@@ -1,5 +1,7 @@
 # RESTful Booker API Test Collection - Postman
 
+[![Tests](https://github.com/teranastasi9-source/restful_booker_postman/actions/workflows/tests.yml/badge.svg)](https://github.com/teranastasi9-source/restful_booker_postman/actions/workflows/tests.yml)
+
 Purpose: Postman collection for testing https://restful-booker.herokuapp.com/. Portfolio demonstration of API automation skills.
 
 ## Project Overview
@@ -35,6 +37,7 @@ Purpose: Postman collection for testing https://restful-booker.herokuapp.com/. P
 ## Project structure
 ```
 restful_booker_postman/
+  .github/workflows/tests.yml                        - CI: runs the collection via Newman on push/PR, nightly, manual
   docs/report_screenshot.png                       - report screenshot embedded below, for a no-clone preview
   RESTful_Booker.Individual_collections_01_06.json   - separate requests required for integration tests
   RESTful_Booker.IntegrationWorkflows_07.json          - integration workflows built from the collection above
