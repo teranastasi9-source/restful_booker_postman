@@ -1,0 +1,4 @@
+# Generated test report - exclude from GitHub's language statistics so the
+# Languages bar reflects the actual collection/runner (PowerShell), not the
+# committed HTML report.
+test_reports/*.html linguist-generated=true
