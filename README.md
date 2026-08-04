@@ -164,6 +164,26 @@ Option B: Postman GUI
   2. Click Runner tab
   3. Select collection → Run
 
+Option C: Docker (no Node.js/Newman install needed)
+```bash
+docker build -t restful-booker-postman .
+docker run --rm -v "$(pwd)/test_reports:/etc/newman/test_reports" restful-booker-postman
+```
+The included `Dockerfile` is based on the official `postman/newman` image with the
+`htmlextra` reporter pre-installed, so there's no local Node.js/npm setup needed at all. The
+`-v` mount writes the HTML report back out to `test_reports/` on the host.
+
+On Windows Git Bash specifically, prefix the command with `MSYS_NO_PATHCONV=1` (e.g.
+`MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd)/test_reports:/etc/newman/test_reports" ...`) -
+without it, Git Bash's automatic path translation silently mangles the `$(pwd)` mount so the
+container runs fine but the report never actually reaches the host. PowerShell/cmd and
+macOS/Linux shells aren't affected.
+
+This is a
+local/manual convenience, not part of CI - the GitHub Actions workflow already runs on a
+consistent `ubuntu-latest` runner with Node set up directly, so containerizing it wouldn't add
+anything there.
+
 
 ## Configuration
 Variables are stored at collection scope:
