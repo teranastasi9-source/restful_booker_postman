@@ -1,6 +1,7 @@
 # RESTful Booker API Test Collection - Postman
 
 [![Tests](https://github.com/teranastasi9-source/restful_booker_postman/actions/workflows/tests.yml/badge.svg)](https://github.com/teranastasi9-source/restful_booker_postman/actions/workflows/tests.yml)
+![Assertions](https://img.shields.io/badge/assertions-214-brightgreen)
 
 Purpose: Postman collection for testing https://restful-booker.herokuapp.com/. Portfolio demonstration of API automation skills.
 
