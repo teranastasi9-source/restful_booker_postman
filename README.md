@@ -225,7 +225,11 @@ Report includes:
   - Request/response details
   - Summary dashboard
 
-A recent run's report is committed at `test_reports/report_IntegrationWorkflows_07.html` so
+**Live report:** redeployed to GitHub Pages after every push to `main` - see it at
+[teranastasi9-source.github.io/restful_booker_postman](https://teranastasi9-source.github.io/restful_booker_postman/)
+without cloning anything.
+
+A recent run's report is also committed at `test_reports/report_IntegrationWorkflows_07.html` so
 you can see the results without running anything - open it directly in a browser.
 
 ![HTML test report](docs/report_screenshot.png)
