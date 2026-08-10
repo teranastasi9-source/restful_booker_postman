@@ -58,6 +58,27 @@ jobs:
               sleep 5
             fi
           done
+      - name: Run the individual endpoint collection
+        # Same retry policy as the workflow collection above, for the same reason - both hit
+        # the same shared, public restful-booker.herokuapp.com instance and are subject to the
+        # same occasional latency/availability blips. Verified directly (2026-08-10): 170/170
+        # assertions pass consistently across repeated runs, so a retry here is a safety net
+        # for shared-API noise, not a mask for a flaky test.
+        run: |
+          for attempt in 1 2; do
+            if newman run RESTful_Booker.Individual_collections_01_06.json \
+              -r htmlextra \
+              --reporter-htmlextra-export test_reports/report_Individual_collections_01_06.html \
+              --timeout 15000 \
+              --delay-request 200; then
+              break
+            elif [ "$attempt" -eq 2 ]; then
+              exit 1
+            else
+              echo "Attempt $attempt failed - retrying once (see comment above)."
+              sleep 5
+            fi
+          done
       - name: Upload report (always, so failures are inspectable)
         if: always()
         uses: actions/upload-artifact@v4
@@ -118,12 +139,27 @@ jobs:
         with:
           name: test-report
           path: test_reports/
-      - name: Stage the report as the Pages site root
-        # newman-reporter-htmlextra produces a self-contained single HTML file
-        # (CSS/JS inlined), so it can be served as-is.
+      - name: Stage both reports as the Pages site
+        # newman-reporter-htmlextra produces self-contained single HTML files (CSS/JS
+        # inlined), so each can be served as-is. IntegrationWorkflows_07 stays at the site
+        # root (index.html) since that's the URL already linked from the README - the
+        # individual-collection report is added alongside it, not replacing it. A small nav
+        # bar is injected into each so a visitor landing on either one can find the other -
+        # same pattern used in the playwright_ui_automation sibling project's Pages site.
         run: |
           mkdir -p _site
           cp test_reports/report_IntegrationWorkflows_07.html _site/index.html
+          cp test_reports/report_Individual_collections_01_06.html _site/individual-collections.html
+
+          NAV_STYLE='background:#24292f;color:#c9d1d9;padding:10px 16px;font-family:-apple-system,sans-serif;font-size:14px'
+          LINK_STYLE='color:#79c0ff;margin-right:14px'
+          CUR_STYLE='color:#fff;margin-right:14px'
+
+          NAV_WORKFLOWS="<div style=\"$NAV_STYLE\">Collection: <strong style=\"$CUR_STYLE\">Integration Workflows (07)</strong><a href=\"individual-collections.html\" style=\"$LINK_STYLE\">Individual Collections (01-06)</a></div>"
+          NAV_INDIVIDUAL="<div style=\"$NAV_STYLE\">Collection: <a href=\"./\" style=\"$LINK_STYLE\">Integration Workflows (07)</a><strong style=\"$CUR_STYLE\">Individual Collections (01-06)</strong></div>"
+
+          sed -i "s|<body>|<body>${NAV_WORKFLOWS}|" _site/index.html
+          sed -i "s|<body>|<body>${NAV_INDIVIDUAL}|" _site/individual-collections.html
       - name: Delete stale github-pages artifact from a previous attempt, if any
         # Re-running this workflow leaves the previous attempt's already-uploaded
         # "github-pages" artifact in place - upload-pages-artifact always uses that fixed name,

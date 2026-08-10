@@ -38,14 +38,16 @@ Purpose: Postman collection for testing https://restful-booker.herokuapp.com/. P
 ## Project structure
 ```
 restful_booker_postman/
-  .github/workflows/tests.yml                        - CI: runs the collection via Newman on push/PR, nightly, manual
+  .github/workflows/tests.yml                        - CI: runs both collections via Newman on push/PR, weekly, manual
   Dockerfile                                           - optional containerized run (see "Run tests in Docker", Option C)
   .dockerignore                                          - keeps .git out of the Docker build context
   docs/report_screenshot.png                       - report screenshot embedded below, for a no-clone preview
-  RESTful_Booker.Individual_collections_01_06.json   - separate requests required for integration tests
+  RESTful_Booker.Individual_collections_01_06.json   - standalone per-endpoint tests (positive and negative cases)
   RESTful_Booker.IntegrationWorkflows_07.json          - integration workflows built from the collection above
+  run_individual_collections_01_06.ps1                   - runs Individual_collections_01_06.json via Newman
   run_integration_workflows_07.ps1                       - runs IntegrationWorkflows_07.json via Newman
   test_reports/
+    report_Individual_collections_01_06.html               - generated HTML report (Newman htmlextra)
     report_IntegrationWorkflows_07.html                    - generated HTML report (Newman htmlextra)
   README.md
 ```
@@ -159,7 +161,7 @@ restful_booker_postman/
 ## Test execution
 Option A: PowerShell Script
   1. Open PowerShell in 'restful_booker_postman' folder
-  2. Run: .\run_integration_workflows_07.ps1
+  2. Run: .\run_integration_workflows_07.ps1 (or .\run_individual_collections_01_06.ps1)
   3. View results in browser (auto-opens)
 
 Option B: Postman GUI
@@ -173,8 +175,9 @@ docker build -t restful-booker-postman .
 docker run --rm -v "$(pwd)/test_reports:/etc/newman/test_reports" restful-booker-postman
 ```
 The included `Dockerfile` is based on the official `postman/newman` image with the
-`htmlextra` reporter pre-installed, so there's no local Node.js/npm setup needed at all. The
-`-v` mount writes the HTML report back out to `test_reports/` on the host.
+`htmlextra` reporter pre-installed, so there's no local Node.js/npm setup needed at all - it
+runs both collections in sequence, one container. The `-v` mount writes both HTML reports
+back out to `test_reports/` on the host.
 
 On Windows Git Bash specifically, prefix the command with `MSYS_NO_PATHCONV=1` (e.g.
 `MSYS_NO_PATHCONV=1 docker run --rm -v "$(pwd)/test_reports:/etc/newman/test_reports" ...`) -
@@ -228,29 +231,41 @@ Report includes:
 
 **Live report:** redeployed to GitHub Pages after every push to `main` - see it at
 [teranastasi9-source.github.io/restful_booker_postman](https://teranastasi9-source.github.io/restful_booker_postman/)
-without cloning anything.
+without cloning anything. The Integration Workflows report is the site root; a small nav bar
+links across to the Individual Collections report and back.
 
-A recent run's report is also committed at `test_reports/report_IntegrationWorkflows_07.html` so
-you can see the results without running anything - open it directly in a browser.
+A recent run's report is also committed at `test_reports/report_IntegrationWorkflows_07.html`
+and `test_reports/report_Individual_collections_01_06.html` so you can see the results without
+running anything - open either directly in a browser.
 
 ![HTML test report](docs/report_screenshot.png)
 
 ## CI
 
-Runs on every push/PR, plus a weekly (Monday) scheduled run and manual `workflow_dispatch` (see
-`.github/workflows/tests.yml`). The Newman step retries once automatically (see the known
-mock-server flake below). If the **scheduled** run still fails after that retry, a GitHub
-Issue is opened automatically (push/PR/manual runs are already being watched live, so they
-don't) - a "don't let this go unnoticed" safety net.
+Runs both collections on every push/PR, plus a weekly (Monday) scheduled run and manual
+`workflow_dispatch` (see `.github/workflows/tests.yml`). Each Newman step retries once
+automatically on its own (see the known mock-server flake below) - one collection's retry
+doesn't affect the other's. If the **scheduled** run still fails after that, a GitHub Issue
+is opened automatically (push/PR/manual runs are already being watched live, so they don't) -
+a "don't let this go unnoticed" safety net.
+
+`Individual_collections_01_06.json` was historically excluded from CI (it wasn't reliably
+green end-to-end - see git history for the fixes involved), unlike `IntegrationWorkflows_07`
+which was always the CI-verified one. Both now run in CI as of 2026-08-10, verified directly
+against the live API repeatedly beforehand: 170/170 assertions passing consistently.
 
 
 ## Troubleshooting
 Issue: "newman: command not found"
   → Run: npm install -g newman newman-reporter-htmlextra
 
-Issue: "callback timed out"
-  → Check internet connection
-  → Increase timeout in *.ps1 scripts
+Issue: "callback timed out" (Newman exits 1, but the HTML report still looks complete)
+  → Verified 2026-08-10: reproducible locally on Windows whenever `-r htmlextra` is used
+    (with or without `cli` alongside it, in Docker or directly via `npx newman`), even on a
+    run where every single assertion actually passed - looks like a trailing async-cleanup
+    quirk specific to this reporter/environment combination, not a real request timeout.
+    The actual CI (GitHub Actions, ubuntu-latest, fresh npm install) does not reproduce this
+    - check the report/summary output itself before assuming a real failure.
 
 Issue: `update_booking_expired_token_mocked` fails with "expected N to be below 1000"
   → Postman's own mock server (`restful_booker_mocked`) occasionally responds slowly -
