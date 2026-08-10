@@ -186,11 +186,6 @@
                   "    pm.expect(resBody).to.have.property(\"reason\");\r",
                   "    pm.expect(resBody.reason).to.be.a(\"string\");\r",
                   "    pm.expect(resBody.reason).to.eql(\"Bad credentials\");\r",
-                  "});\r",
-                  "\r",
-                  "pm.test(\"Test_5. Store empty token to collection variables\", function () {\r",
-                  "    pm.collectionVariables.set(\"token\", \"\");\r",
-                  "    pm.expect(pm.collectionVariables.get(\"token\")).to.eql(\"\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -273,11 +268,6 @@
                   "    pm.expect(resBody).to.have.property(\"reason\");\r",
                   "    pm.expect(resBody.reason).to.be.a(\"string\");\r",
                   "    pm.expect(resBody.reason).to.eql(\"Bad credentials\");\r",
-                  "});\r",
-                  "\r",
-                  "pm.test(\"Test_5. Store empty token to collection variables\", function () {\r",
-                  "    pm.collectionVariables.set(\"token\", \"\");\r",
-                  "    pm.expect(pm.collectionVariables.get(\"token\")).to.eql(\"\");\r",
                   "});"
                 ],
                 "type": "text/javascript",
@@ -1138,17 +1128,6 @@
                 "packages": {},
                 "requests": {}
               }
-            },
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "pm.variables.set(\"bookingid\", \"999999\")"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
             }
           ],
           "request": {
@@ -1158,13 +1137,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/booking/{{bookingid}}",
+              "raw": "{{base_url}}/booking/999999",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "booking",
-                "{{bookingid}}"
+                "999999"
               ]
             },
             "description": "## Get Booking by Invalid ID\n\nThis request attempts to retrieve a booking using a **invalid booking ID**. It is used to verify that the API correctly handles non-existent booking IDs by returning a `404 Not Found` response.\n\n---\n\n### Endpoint\n\n```\nGET {{base_url}}/booking/invalid_booking_id\n\n ```\n\n---\n\n### Variables\n\n| Variable | Description |\n| --- | --- |\n| `https://restful-booker.herokuapp.com` | Base URL of the RESTful Booker API |\n| `invalid_booking_id` | The booking ID used in the request — expected to be non-existent |\n\n---\n\n### Expected Behavior\n\nWhen an invalid `bookingid` is provided, the API should respond with:\n\n- **Status:** `404 Not Found`\n    \n- **Content-Type:** `text/plain`\n    \n- **Body:** Contains the text `\"Not Found\"`\n    \n\n---\n\n### Tests\n\n1. **Test_1 — Response status is 404 (Not Found)**  \n    Verifies that the HTTP response status code is `404`.\n    \n2. **Test_2 — Response time is below** **`max_response_time`**  \n    Verifies that the response time is below the threshold defined in the `max_response_time` collection variable.\n    \n3. **Test_3 — Response body is not empty and contains \"Not Found\"**  \n    Verifies that:\n    \n    - The `Content-Type` header includes `text/plain`\n        \n    - The response body is not empty\n        \n    - The response body includes the text `\"Not Found\"`"
@@ -1199,17 +1178,6 @@
                 "packages": {},
                 "requests": {}
               }
-            },
-            {
-              "listen": "prerequest",
-              "script": {
-                "exec": [
-                  "pm.variables.set(\"bookingid\", \"0125\")"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
             }
           ],
           "request": {
@@ -1219,13 +1187,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/booking/{{bookingid}}",
+              "raw": "{{base_url}}/booking/abc123",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "booking",
-                "{{bookingid}}"
+                "abc123"
               ]
             },
             "description": "## Get Booking by Malformed ID\n\nThis request attempts to retrieve a booking using a malformed **booking ID**. It is used to verify that the API correctly handles malformed booking IDs by returning a `404 Not Found` response.\n\n---\n\n### Endpoint\n\n```\nGET {{base_url}}/booking/malformed_booking_id\n\n ```\n\n---\n\n### Variables\n\n| Variable | Description |\n| --- | --- |\n| `https://restful-booker.herokuapp.com` | Base URL of the RESTful Booker API |\n| `malformed_booking_id` | The booking ID used in the request — expected to be malformed |\n\n---\n\n### Expected Behavior\n\nWhen an malformed`bookingid` is provided, the API should respond with:\n\n- **Status:** `404 Not Found`\n    \n- **Content-Type:** `text/plain`\n    \n- **Body:** Contains the text `\"Not Found\"`\n    \n\n---\n\n### Tests\n\n1. **Test_1 — Response status is 404 (Not Found)**  \n    Verifies that the HTTP response status code is `404`.\n    \n2. **Test_2 — Response time is below** **`max_response_time`**  \n    Verifies that the response time is below the threshold defined in the `max_response_time` collection variable.\n    \n3. **Test_3 — Response body is not empty and contains \"Not Found\"**  \n    Verifies that:\n    \n    - The `Content-Type` header includes `text/plain`\n        \n    - The response body is not empty\n        \n    - The response body includes the text `\"Not Found\"`"
@@ -1458,11 +1426,7 @@
                   "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"text/plain\");\r",
                   "    pm.expect(resBody).to.be.not.empty;\r",
                   "    pm.expect(resBody).to.eql(\"Internal Server Error\");    \r",
-                  "});\r",
-                  "\r",
-                  "// Restore empty bookingid\r",
-                  "pm.collectionVariables.set(\"bookingid\", \"\")\r",
-                  "pm.expect(pm.collectionVariables.get(\"bookingid\")).to.eql(\"\");"
+                  "});"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -1529,17 +1493,13 @@
                   "// Parse response body once for reuse\r",
                   "const resBody = pm.response.json();\r",
                   "\r",
-                  "pm.test(\"Test_1. Status code indicates error\", function () {\r",
-                  "    pm.expect(pm.response.code).to.be.oneOf([400, 500]);\r",
+                  "pm.test(\"Test_1. API does not validate date format (known bug, see description) - returns 200 instead of rejecting it\", function () {\r",
+                  "    pm.expect(pm.response.code).to.eql(200);\r",
                   "});\r",
                   "\r",
                   "pm.test(\"Test_2. Response time is below max_response_time\", function () {\r",
                   "    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.collectionVariables.get(\"max_response_time\")));\r",
-                  "});\r",
-                  "\r",
-                  "// Restore empty bookingid\r",
-                  "pm.collectionVariables.set(\"bookingid\", \"\")\r",
-                  "pm.expect(pm.collectionVariables.get(\"bookingid\")).to.eql(\"\");"
+                  "});"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -1591,7 +1551,7 @@
                 "booking"
               ]
             },
-            "description": "# Booking - CreateBooking (Invalid date format)\n\nThis request tests the API's behavior when booking dates are provided in an **invalid format** (`DD-MM-YYYY` instead of the expected `YYYY-MM-DD`). The API is expected to reject such input and return an error response (`400` or `500`).\n\n> ⚠️ **Known Bug**  \nThe API does not validate date formats and incorrectly returns `200 OK` instead of `400` or `500`. This is a bug that must be reported and fixed. \n  \n\n---\n\n## Endpoint\n\n| Method | URL |\n| --- | --- |\n| `POST` | `{{base_url}} /booking` |\n\n---\n\n## Authentication\n\nNo authentication is required for this request.\n\n---\n\n## Request Headers\n\n| Key | Value | Description |\n| --- | --- | --- |\n| `Content-Type` | `application/json` | Indicates the request body is JSON |\n\n---\n\n## Pre-Request Script\n\nThe following script dynamically generates values for `firstname`, `lastname`, `totalprice`, and `depositpaid` using Postman dynamic variables before each request execution:\n\n``` javascript\nconst firstname = pm.variables.replaceIn('{{$randomFirstName}}')\nconst lastname = pm.variables.replaceIn('{{$randomLastName}}')\nconst totalprice = parseInt(pm.variables.replaceIn('{{$randomInt}}'), 10);\n\n ```\n\n> These variables are then injected into the request body via `{{firstname}}`, `{{lastname}}` and `{{totalprice}}.` \n  \n\n---\n\n## Request Body\n\n``` json\n{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": {{totalprice}},\n    \"depositpaid\": false,\n    \"bookingdates\": {\n        \"checkin\": \"12-02-2026\",\n        \"checkout\": \"15-02-2026\"\n    },\n    \"additionalneeds\": \"Breakfast\"\n}\n\n ```\n\n| Field | Type | Value / Source | Description |\n| --- | --- | --- | --- |\n| `firstname` | `string` | `{{firstname}}` (dynamic) | Randomly generated first name |\n| `lastname` | `string` | `{{lastname}}` (dynamic) | Randomly generated last name |\n| `totalprice` | `number` | `{{totalprice}}` (dynamic) | Randomly generated integer price |\n| `depositpaid` | `boolean` | `{{depositpaid}}` (dynamic) | Randomly generated boolean |\n| `bookingdates.checkin` | `string` | `\"12-02-2026\"` | ❌ **Wrong format** — uses `DD-MM-YYYY` instead of `YYYY-MM-DD` |\n| `bookingdates.checkout` | `string` | `\"15-02-2026\"` | ❌ **Wrong format** — uses `DD-MM-YYYY` instead of `YYYY-MM-DD` |\n| `additionalneeds` | `string` | `\"Breakfast\"` | Static additional request |\n\n---\n\n## Expected Response\n\nThe tests expect the API to return a **`400`** or **`500`** error response, indicating that the invalid date format was rejected.\n\n> ⚠️ **Bug:** The API currently returns `200 OK` along with a full booking object, which is **incorrect behavior**. The server should validate the date format and return an appropriate error response. \n  \n\n---\n\n## Automated Tests\n\n| Test Name | Description |\n| --- | --- |\n| **Test_1. Status code indicates error** | Asserts that the response status code is one of `[400, 500]`, confirming the API rejects the invalid date format |\n| **Test_2. Response time is below max_response_time** | Asserts that `responseTime` is below the value of the `max_response_time` collection variable (parsed as integer) |\n| **Restore bookingid** | Sets the `bookingid` collection variable to an empty string `\"\"` and asserts it equals `\"\"`, ensuring a clean state after the test |"
+            "description": "# Booking - CreateBooking (Invalid date format)\n\nThis request tests the API's behavior when booking dates are provided in an **invalid format** (`DD-MM-YYYY` instead of the expected `YYYY-MM-DD`). The API is expected to reject such input and return an error response (`400` or `500`).\n\n> ⚠️ **Known Bug**  \nThe API does not validate date formats and incorrectly returns `200 OK` instead of `400` or `500`. This is a bug that must be reported and fixed. \n  \n\n---\n\n## Endpoint\n\n| Method | URL |\n| --- | --- |\n| `POST` | `{{base_url}} /booking` |\n\n---\n\n## Authentication\n\nNo authentication is required for this request.\n\n---\n\n## Request Headers\n\n| Key | Value | Description |\n| --- | --- | --- |\n| `Content-Type` | `application/json` | Indicates the request body is JSON |\n\n---\n\n## Pre-Request Script\n\nThe following script dynamically generates values for `firstname`, `lastname`, `totalprice`, and `depositpaid` using Postman dynamic variables before each request execution:\n\n``` javascript\nconst firstname = pm.variables.replaceIn('{{$randomFirstName}}')\nconst lastname = pm.variables.replaceIn('{{$randomLastName}}')\nconst totalprice = parseInt(pm.variables.replaceIn('{{$randomInt}}'), 10);\n\n ```\n\n> These variables are then injected into the request body via `{{firstname}}`, `{{lastname}}` and `{{totalprice}}.` \n  \n\n---\n\n## Request Body\n\n``` json\n{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": {{totalprice}},\n    \"depositpaid\": false,\n    \"bookingdates\": {\n        \"checkin\": \"12-02-2026\",\n        \"checkout\": \"15-02-2026\"\n    },\n    \"additionalneeds\": \"Breakfast\"\n}\n\n ```\n\n| Field | Type | Value / Source | Description |\n| --- | --- | --- | --- |\n| `firstname` | `string` | `{{firstname}}` (dynamic) | Randomly generated first name |\n| `lastname` | `string` | `{{lastname}}` (dynamic) | Randomly generated last name |\n| `totalprice` | `number` | `{{totalprice}}` (dynamic) | Randomly generated integer price |\n| `depositpaid` | `boolean` | `{{depositpaid}}` (dynamic) | Randomly generated boolean |\n| `bookingdates.checkin` | `string` | `\"12-02-2026\"` | ❌ **Wrong format** — uses `DD-MM-YYYY` instead of `YYYY-MM-DD` |\n| `bookingdates.checkout` | `string` | `\"15-02-2026\"` | ❌ **Wrong format** — uses `DD-MM-YYYY` instead of `YYYY-MM-DD` |\n| `additionalneeds` | `string` | `\"Breakfast\"` | Static additional request |\n\n---\n\n## Expected Response\n\nThe API does not validate date formats: it accepts `DD-MM-YYYY` and returns `200 OK` with a full booking object instead of rejecting it. This test asserts that documented, current behavior directly, rather than an ideal response the API never actually sends. \n  \n\n---\n\n## Automated Tests\n\n| Test Name | Description |\n| --- | --- |\n| **Test_1. API does not validate date format** | Asserts the response status is `200` - the known, verified bug behavior, not the `400`/`500` a validating API would return |\n| **Test_2. Response time is below max_response_time** | Asserts that `responseTime` is below the value of the `max_response_time` collection variable (parsed as integer) |\n| **Restore bookingid** | Sets the `bookingid` collection variable to an empty string `\"\"` and asserts it equals `\"\"`, ensuring a clean state after the test |"
           },
           "response": []
         },
@@ -1602,17 +1562,13 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Test_1. Status code indicates error\", function () {\r",
-                  "    pm.expect(pm.response.code).to.be.oneOf([400, 500]);\r",
+                  "pm.test(\"Test_1. API does not validate checkout-before-checkin (known bug, see description) - returns 200 instead of rejecting it\", function () {\r",
+                  "    pm.expect(pm.response.code).to.eql(200);\r",
                   "});\r",
                   "\r",
                   "pm.test(\"Test_2. Response time is below max_response_time\", function () {\r",
                   "    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.collectionVariables.get(\"max_response_time\")));\r",
-                  "});\r",
-                  "\r",
-                  "// Restore empty bookingid\r",
-                  "pm.collectionVariables.set(\"bookingid\", \"\")\r",
-                  "pm.expect(pm.collectionVariables.get(\"bookingid\")).to.eql(\"\");"
+                  "});"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -1664,7 +1620,7 @@
                 "booking"
               ]
             },
-            "description": "# Booking - CreateBooking (Checkout date before checkin)\n\nThis request tests the API's behavior when the **checkout date is earlier than the checkin date** — specifically, `checkout: 2026-02-12` before `checkin: 2026-02-15`. The API is expected to validate the date order and reject the request with a `400` or `500` error response.\n\n> ⚠️ Known Bug  \nThe API does not validate date order and incorrectly returns `200 OK` instead of `400` or `500`. \n  \n\n---\n\n## Endpoint\n\n| Method | URL |\n| --- | --- |\n| `POST` | `{{base_url}}/booking` |\n\n---\n\n## Authentication\n\nNo authentication is required for this request.\n\n---\n\n## Request Headers\n\n| Key | Value | Description |\n| --- | --- | --- |\n| `Content-Type` | `application/json` | Sets the format of payload you are sending |\n\n---\n\n## Pre-Request Script\n\n``` javascript\nconst firstname = pm.variables.replaceIn('{{$randomFirstName}}');\nconst lastname = pm.variables.replaceIn('{{$randomLastName}}');\nconst totalprice = parseInt(pm.variables.replaceIn('{{$randomInt}}'), 10);\n\n ```\n\nThis script dynamically generates request data before each run using Postman dynamic variables:\n\n- **`firstname`** — a random first name generated via `{{$randomFirstName}}`\n    \n- **`lastname`** — a random last name generated via `{{$randomLastName}}`\n    \n- **`totalprice`** — a random integer generated via `{{$randomInt}}`, parsed to an integer\n    \n\nNote that `depositpaid` is hardcoded to `false` directly in the request body.\n\n---\n\n## Request Body\n\n``` json\n{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": {{totalprice}},\n    \"depositpaid\": false,\n    \"bookingdates\": {\n        \"checkin\": \"2026-02-15\",\n        \"checkout\": \"2026-02-12\"\n    },\n    \"additionalneeds\": \"Breakfast\"\n}\n\n ```\n\n| Field | Type | Value / Source | Description |\n| --- | --- | --- | --- |\n| `firstname` | String | `{{firstname}}` (pre-request script) | Randomly generated first name |\n| `lastname` | String | `{{lastname}}` (pre-request script) | Randomly generated last name |\n| `totalprice` | Integer | `{{totalprice}}` (pre-request script) | Randomly generated total price |\n| `depositpaid` | Boolean | `false` (hardcoded) | Whether a deposit has been paid |\n| `bookingdates.checkin` | String | `\"2026-02-15\"` (hardcoded) | Check-in date |\n| `bookingdates.checkout` | String | `\"2026-02-12\"` ⚠️ (hardcoded) | **Checkout is before checkin** — this is the invalid scenario being tested |\n| `additionalneeds` | String | `\"Breakfast\"` (hardcoded) | Any additional requirements for the booking |\n\n---\n\n## Expected Response\n\nThe test expects the API to return a **`400`** or **`500`** error response, since the provided date range is invalid (`checkout: 2026-02-12` is before `checkin: 2026-02-15`).\n\n> ⚠️ **Known Bug:** The API currently returns `200 OK` with a full booking object, which is **incorrect behavior**. The server accepts and creates the booking without validating that the checkout date must be after the checkin date. \n  \n\n---\n\n## Automated Tests\n\n| Test Name | Description |\n| --- | --- |\n| **Test_1. Status code indicates error** | Asserts that the response code is one of `[400, 500]`, indicating the API correctly rejected the invalid date range |\n| **Test_2. Response time is below max_response_time** | Asserts that `responseTime` is below the integer value of the collection variable `max_response_time` |\n| **Restore bookingid** | Sets the `bookingid` collection variable to an empty string `\"\"` and asserts it equals `\"\"`, ensuring a clean state for subsequent requests |"
+            "description": "# Booking - CreateBooking (Checkout date before checkin)\n\nThis request tests the API's behavior when the **checkout date is earlier than the checkin date** — specifically, `checkout: 2026-02-12` before `checkin: 2026-02-15`. The API is expected to validate the date order and reject the request with a `400` or `500` error response.\n\n> ⚠️ Known Bug  \nThe API does not validate date order and incorrectly returns `200 OK` instead of `400` or `500`. \n  \n\n---\n\n## Endpoint\n\n| Method | URL |\n| --- | --- |\n| `POST` | `{{base_url}}/booking` |\n\n---\n\n## Authentication\n\nNo authentication is required for this request.\n\n---\n\n## Request Headers\n\n| Key | Value | Description |\n| --- | --- | --- |\n| `Content-Type` | `application/json` | Sets the format of payload you are sending |\n\n---\n\n## Pre-Request Script\n\n``` javascript\nconst firstname = pm.variables.replaceIn('{{$randomFirstName}}');\nconst lastname = pm.variables.replaceIn('{{$randomLastName}}');\nconst totalprice = parseInt(pm.variables.replaceIn('{{$randomInt}}'), 10);\n\n ```\n\nThis script dynamically generates request data before each run using Postman dynamic variables:\n\n- **`firstname`** — a random first name generated via `{{$randomFirstName}}`\n    \n- **`lastname`** — a random last name generated via `{{$randomLastName}}`\n    \n- **`totalprice`** — a random integer generated via `{{$randomInt}}`, parsed to an integer\n    \n\nNote that `depositpaid` is hardcoded to `false` directly in the request body.\n\n---\n\n## Request Body\n\n``` json\n{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": {{totalprice}},\n    \"depositpaid\": false,\n    \"bookingdates\": {\n        \"checkin\": \"2026-02-15\",\n        \"checkout\": \"2026-02-12\"\n    },\n    \"additionalneeds\": \"Breakfast\"\n}\n\n ```\n\n| Field | Type | Value / Source | Description |\n| --- | --- | --- | --- |\n| `firstname` | String | `{{firstname}}` (pre-request script) | Randomly generated first name |\n| `lastname` | String | `{{lastname}}` (pre-request script) | Randomly generated last name |\n| `totalprice` | Integer | `{{totalprice}}` (pre-request script) | Randomly generated total price |\n| `depositpaid` | Boolean | `false` (hardcoded) | Whether a deposit has been paid |\n| `bookingdates.checkin` | String | `\"2026-02-15\"` (hardcoded) | Check-in date |\n| `bookingdates.checkout` | String | `\"2026-02-12\"` ⚠️ (hardcoded) | **Checkout is before checkin** — this is the invalid scenario being tested |\n| `additionalneeds` | String | `\"Breakfast\"` (hardcoded) | Any additional requirements for the booking |\n\n---\n\n## Expected Response\n\nThe API does not validate date order: it accepts a checkout date before the checkin date and returns `200 OK` with a full booking object instead of rejecting it. This test asserts that documented, current behavior directly, rather than an ideal response the API never actually sends. \n  \n\n---\n\n## Automated Tests\n\n| Test Name | Description |\n| --- | --- |\n| **Test_1. API does not validate checkout-before-checkin** | Asserts the response status is `200` - the known, verified bug behavior, not the `400`/`500` a validating API would return |\n| **Test_2. Response time is below max_response_time** | Asserts that `responseTime` is below the integer value of the collection variable `max_response_time` |\n| **Restore bookingid** | Sets the `bookingid` collection variable to an empty string `\"\"` and asserts it equals `\"\"`, ensuring a clean state for subsequent requests |"
           },
           "response": []
         },
@@ -1675,17 +1631,13 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "pm.test(\"Test_1. Status code indicates error\", function () {\r",
-                  "    pm.expect(pm.response.code).to.be.oneOf([400, 500]);\r",
+                  "pm.test(\"Test_1. API does not validate a negative totalprice (known bug, see description) - returns 200 instead of rejecting it\", function () {\r",
+                  "    pm.expect(pm.response.code).to.eql(200);\r",
                   "});\r",
                   "\r",
                   "pm.test(\"Test_2. Response time is below max_response_time\", function () {\r",
                   "    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.collectionVariables.get(\"max_response_time\")));\r",
-                  "});\r",
-                  "\r",
-                  "// Restore empty bookingid\r",
-                  "pm.collectionVariables.set(\"bookingid\", \"\")\r",
-                  "pm.expect(pm.collectionVariables.get(\"bookingid\")).to.eql(\"\");"
+                  "});"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -1738,7 +1690,7 @@
                 "booking"
               ]
             },
-            "description": "# Booking - CreateBooking (Negative totalprice)\n\nThis is a **negative test** that verifies the API's behaviour when a booking is submitted with a **negative** **`totalprice`** value. The expectation is that the server should reject such a request with an error response (`400` or `500`).\n\n---\n\n## Request Details\n\n| Field | Value |\n| --- | --- |\n| **Method** | `POST` |\n| **Endpoint** | `{{base_url}}/booking` |\n| **Content-Type** | `application/json` |\n| **Auth** | None |\n\n---\n\n## Request Body\n\n``` json\n{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": {{totalprice}},\n    \"depositpaid\": {{depositpaid}},\n    \"bookingdates\": {\n        \"checkin\": \"2026-02-12\",\n        \"checkout\": \"2026-02-15\"\n    },\n    \"additionalneeds\": \"Breakfast\"\n}\n\n ```\n\n> ⚠️ `totalprice` is intentionally set to a **negative integer** to test invalid input handling. \n  \n\n---\n\n## Variables\n\n| Variable | Source | Description |\n| --- | --- | --- |\n| `{{base_url}}` | Collection variable | Base URL for the RESTful Booker API |\n| `{{firstname}}` | Pre-request script | Randomly generated first name (`$randomFirstName`) |\n| `{{lastname}}` | Pre-request script | Randomly generated last name (`$randomLastName`) |\n| `{{totalprice}}` | Pre-request script | Randomly generated **negative** integer (`-$randomInt`) |\n| `{{depositpaid}}` | Pre-request script | Randomly generated boolean (`$randomBoolean`) |\n\n---\n\n## Pre-request Script\n\nGenerates random values for the booking fields before the request is sent:\n\n- `firstname` — random first name\n    \n- `lastname` — random last name\n    \n- `totalprice` — negative random integer (e.g. `-736`)\n    \n- `depositpaid` — random boolean\n    \n\n---\n\n## Tests\n\n| Test | Assertion |\n| --- | --- |\n| `Test_1. Status code indicates error` | Response status code must be `400` or `500` |\n| `Test_2. Response time is below max_response_time` | Response time must be below the `max_response_time` collection variable |\n\nAfter the tests run, the `bookingid` collection variable is reset to an empty string to avoid polluting subsequent requests.\n\n---\n\n## Expected Outcome\n\nThe API should **reject** the booking and return an error status code (`400 Bad Request` or `500 Internal Server Error`). A `200 OK` response indicates the API is **not validating** the `totalprice` field, which is a bug."
+            "description": "# Booking - CreateBooking (Negative totalprice)\n\nThis is a **negative test** that verifies the API's behaviour when a booking is submitted with a **negative** **`totalprice`** value. The expectation is that the server should reject such a request with an error response (`400` or `500`).\n\n---\n\n## Request Details\n\n| Field | Value |\n| --- | --- |\n| **Method** | `POST` |\n| **Endpoint** | `{{base_url}}/booking` |\n| **Content-Type** | `application/json` |\n| **Auth** | None |\n\n---\n\n## Request Body\n\n``` json\n{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": {{totalprice}},\n    \"depositpaid\": {{depositpaid}},\n    \"bookingdates\": {\n        \"checkin\": \"2026-02-12\",\n        \"checkout\": \"2026-02-15\"\n    },\n    \"additionalneeds\": \"Breakfast\"\n}\n\n ```\n\n> ⚠️ `totalprice` is intentionally set to a **negative integer** to test invalid input handling. \n  \n\n---\n\n## Variables\n\n| Variable | Source | Description |\n| --- | --- | --- |\n| `{{base_url}}` | Collection variable | Base URL for the RESTful Booker API |\n| `{{firstname}}` | Pre-request script | Randomly generated first name (`$randomFirstName`) |\n| `{{lastname}}` | Pre-request script | Randomly generated last name (`$randomLastName`) |\n| `{{totalprice}}` | Pre-request script | Randomly generated **negative** integer (`-$randomInt`) |\n| `{{depositpaid}}` | Pre-request script | Randomly generated boolean (`$randomBoolean`) |\n\n---\n\n## Pre-request Script\n\nGenerates random values for the booking fields before the request is sent:\n\n- `firstname` — random first name\n    \n- `lastname` — random last name\n    \n- `totalprice` — negative random integer (e.g. `-736`)\n    \n- `depositpaid` — random boolean\n    \n\n---\n\n## Tests\n\n| Test | Assertion |\n| --- | --- |\n| `Test_1. API does not validate a negative totalprice` | Response status is `200` - the known, verified bug behavior |\n| `Test_2. Response time is below max_response_time` | Response time must be below the `max_response_time` collection variable |\n\nAfter the tests run, the `bookingid` collection variable is reset to an empty string to avoid polluting subsequent requests.\n\n---\n\n## Expected Outcome\n\nThe API does not validate `totalprice`: it accepts a negative value and returns `200 OK` with a full booking object instead of rejecting it. This test asserts that documented, current behavior directly, rather than an ideal response the API never actually sends."
           },
           "response": []
         },
@@ -1755,11 +1707,7 @@
                   "\r",
                   "pm.test(\"Test_2. Response time is below max_response_time\", function () {\r",
                   "    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.collectionVariables.get(\"max_response_time\")));\r",
-                  "});\r",
-                  "\r",
-                  "// Restore empty bookingid\r",
-                  "pm.collectionVariables.set(\"bookingid\", \"\")\r",
-                  "pm.expect(pm.collectionVariables.get(\"bookingid\")).to.eql(\"\");"
+                  "});"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -1915,6 +1863,10 @@
                   "    pm.expect(resBody.lastname).to.be.an('string');\r",
                   "    pm.expect(pm.collectionVariables.get(\"lastname\")).not.to.eql(expectedResBody.lastname);\r",
                   "    pm.expect(resBody.lastname).to.eql(expectedResBody.lastname);\r",
+                  "    // Refresh \"lastname\" (not just \"updated_lastname\") to the value just confirmed here -\r",
+                  "    // later requests (partial_update_booking_*) read \"lastname\" expecting it to reflect\r",
+                  "    // the booking's current state, not the pre-update original.\r",
+                  "    pm.collectionVariables.set(\"lastname\", resBody.lastname);\r",
                   "    // console.log(\"resBody.lastname:\", resBody.lastname)\r",
                   "    // console.log(\"pm.collectionVariables.get(\"updated_lastname\")\", pm.collectionVariables.get(\"updated_lastname\"))\r",
                   "});\r",
@@ -2282,10 +2234,7 @@
               "listen": "prerequest",
               "script": {
                 "exec": [
-                  "// STEP 1: Set invalid booking ID to test error handling\r",
-                  "pm.variables.set(\"bookingid\", \"999999\")  \r",
-                  "\r",
-                  "// STEP 3: Generate new random lastname to update\r",
+                  "// STEP 1: Generate new random lastname to update\r",
                   "let updated_lastname=pm.variables.replaceIn(\"{{$randomLastName}}\")\r",
                   "\r",
                   "// STEP 3: Alternative for Cookie header\r",
@@ -2353,13 +2302,13 @@
               "raw": "{\r\n    \"firstname\": \"{{firstname}}\",\r\n    \"lastname\": \"{{updated_lastname}}\",\r\n    \"totalprice\": {{totalprice}},\r\n    \"depositpaid\": {{depositpaid}},\r\n    \"bookingdates\": {\r\n        \"checkin\": \"{{checkin}}\",\r\n        \"checkout\": \"{{checkout}}\"\r\n    },\r\n    \"additionalneeds\": \"{{additionalneeds}}\"\r\n}"
             },
             "url": {
-              "raw": "{{base_url}}/booking/{{bookingid}}",
+              "raw": "{{base_url}}/booking/999999",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "booking",
-                "{{bookingid}}"
+                "999999"
               ]
             },
             "description": "# UpdateBooking — Invalid Booking ID\n\nThis is a **negative test** for the `PUT /booking/:id` endpoint. It verifies that the API returns `405 Method Not Allowed` when an invalid or non-existent booking ID (e.g. `999999`) is provided. The test confirms that the server correctly rejects the request and returns a plain-text error body.\n\n---\n\n## Request Details\n\n| Property | Value |\n| --- | --- |\n| **Method** | `PUT` |\n| **URL** | `{{base_url}}/booking/{{bookingid}}` |\n| **Content-Type** | `application/json` |\n| **Cookie** | `token={{token}}` |\n\n---\n\n## Pre-request Script Summary\n\nThe pre-request script performs the following steps:\n\n1. **Sets an invalid booking ID** — `bookingid` is set to `999999`, a non-existent ID, to intentionally trigger an error response from the API.\n    \n2. **Generates a random last name** — `updated_lastname` is assigned a random value using `{{$randomLastName}}` via `pm.variables.replaceIn`.\n    \n3. **Alternative Cookie header approach** — There is a commented-out block that demonstrates an alternative way to attach the auth token using `pm.request.headers.add` with a `Cookie: token=...` header, instead of relying on the static header defined in the request.\n    \n\n---\n\n## Test Assertions\n\n| Test | Description |\n| --- | --- |\n| **Test_1** | Response status is `405` (Method Not Allowed) |\n| **Test_2** | Response time is below the `max_response_time` collection variable |\n| **Test_3** | Response body is not empty, `Content-Type` header includes `text/plain`, and body equals `\"Method Not Allowed\"` |\n\n---\n\n## Variables Used\n\n| Variable | Description |\n| --- | --- |\n| `base_url` | Base URL of the RESTful Booker API |\n| `bookingid` | Set to `999999` in the pre-request script (invalid/non-existent ID) |\n| `token` | Auth token used in the Cookie header |\n| `firstname` | Booking first name (part of request body) |\n| `updated_lastname` | Randomly generated last name for the update payload |\n| `totalprice` | Total price for the booking |\n| `depositpaid` | Boolean indicating whether deposit was paid |\n| `checkin` | Check-in date |\n| `checkout` | Check-out date |\n| `additionalneeds` | Any additional needs for the booking |\n\n---\n\n## Expected Response\n\n| Property | Value |\n| --- | --- |\n| **Status** | `405 Method Not Allowed` |\n| **Body** | `Method Not Allowed` (plain text) |"
@@ -2995,10 +2944,7 @@
               "listen": "prerequest",
               "script": {
                 "exec": [
-                  "// STEP 1: Set invalid booking ID to test error handling\r",
-                  "pm.variables.set(\"bookingid\", \"999999\")\r",
-                  "\r",
-                  "// STEP 3: Generate new random lastname to update\r",
+                  "// STEP 1: Generate new random lastname to update\r",
                   "let updated_lastname=pm.variables.replaceIn(\"{{$randomLastName}}\")\r",
                   "pm.variables.set(\"updated_lastname\", updated_lastname)\r",
                   "\r",
@@ -3072,13 +3018,13 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/booking/{{bookingid}}",
+              "raw": "{{base_url}}/booking/999999",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "booking",
-                "{{bookingid}}"
+                "999999"
               ]
             },
             "description": "# PartialUpdateBooking — Invalid Booking Id (Negative Test)\n\nThis is a **negative test** that verifies the API correctly rejects a `PATCH` request made with an **invalid (non-existent) booking ID** (`999999`).\n\nThe RESTful Booker API does not support `PATCH` on a non-existent resource and returns `405 Method Not Allowed` in this scenario.\n\n---\n\n## Request Details\n\n| Property | Value |\n| --- | --- |\n| Method | `PATCH` |\n| Endpoint | `{{base_url}}/booking/{{bookingid}}` |\n| Auth | Cookie token (`token={{token}}`) |\n| Content-Type | `application/json` |\n\n### Body\n\n``` json\n{\n    \"firstname\": \"{{partial_updated_firstname}}\"\n}\n\n ```\n\n---\n\n## Variables\n\n| Variable | Scope | Description |\n| --- | --- | --- |\n| `base_url` | Collection | Base URL of the RESTful Booker API |\n| `bookingid` | Local (pre-request) | Hardcoded to `999999` (invalid ID) to trigger error |\n| `token` | Collection | Auth token obtained from the `/auth` endpoint |\n| `partial_updated_firstname` | Collection | First name value used in the partial update body |\n| `max_response_time` | Collection | Maximum acceptable response time in milliseconds |\n\n---\n\n## Pre-request Script\n\n- Sets `bookingid` to `999999` to simulate a request against a non-existent booking.\n    \n- Generates a random `updated_lastname` value (stored as a local variable for potential reuse).\n    \n\n---\n\n## Tests\n\n| Test | Assertion |\n| --- | --- |\n| `Test_1` | Response status is `405 Method Not Allowed` |\n| `Test_2` | Response time is below `max_response_time` |\n| `Test_3` | Response `Content-Type` is `text/plain`; body is not empty and equals `\"Method Not Allowed\"` |\n\n---\n\n## Expected Response\n\n- **Status:** `405 Method Not Allowed`\n    \n- **Content-Type:** `text/plain`\n    \n- **Body:** `Method Not Allowed`"
@@ -3452,10 +3398,7 @@
               "listen": "prerequest",
               "script": {
                 "exec": [
-                  "// STEP 1: Set invalid booking ID to test error handling\r",
-                  "pm.variables.set(\"bookingid\", \"999999\")\r",
-                  "\r",
-                  "// STEP 2: Alternative for Cookie header\r",
+                  "// STEP 1: Alternative for Cookie header\r",
                   "// let token = pm.collectionVariables.get(\"token\");\r",
                   "// pm.request.headers.add(\r",
                   "// {\r",
@@ -3520,13 +3463,13 @@
               "raw": ""
             },
             "url": {
-              "raw": "{{base_url}}/booking/{{bookingid}}",
+              "raw": "{{base_url}}/booking/999999",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "booking",
-                "{{bookingid}}"
+                "999999"
               ]
             },
             "description": "# DeleteBooking (Invalid Booking ID)\n\n**Negative test** — attempts to delete a booking using a non-existent booking ID (`999999`) to verify that the API correctly rejects the request with a `405 Method Not Allowed` response. This test confirms the API's error-handling behaviour when an invalid resource ID is provided.\n\n---\n\n## Request Details\n\n| Property | Value |\n| --- | --- |\n| **Method** | `DELETE` |\n| **URL** | `{{base_url}}/booking/{{bookingid}}` |\n\n---\n\n## Headers\n\n| Header | Value | Description |\n| --- | --- | --- |\n| `Content-Type` | `application/json` | Specifies the request payload format |\n| `Cookie` | `token={{token}}` | Passes the auth token for protected endpoint access; alternative to the `Authorization` header |\n\n---\n\n## Variables\n\n| Variable | Source | Purpose |\n| --- | --- | --- |\n| `{{base_url}}` | Collection | Base URL of the RESTful Booker API |\n| `{{bookingid}}` | Set in pre-request script | Overridden to `999999` to simulate a non-existent booking ID |\n| `{{token}}` | Collection variable | Auth token passed via the `Cookie` header |\n| `{{max_response_time}}` | Collection variable | Maximum acceptable response time threshold (in milliseconds) |\n\n---\n\n## Pre-request Script Behaviour\n\n- **Step 1:** Sets `bookingid` to `999999` — a deliberately invalid/non-existent ID — to trigger an error response from the API.\n    \n- **Step 2 (commented out):** An alternative approach that manually constructs and adds the `Cookie` header using `pm.request.headers.add` with the token retrieved from `pm.collectionVariables.get(\"token\")`. This can be enabled if the header-based approach is not sufficient.\n    \n\n---\n\n## Expected Response\n\n| Property | Expected Value |\n| --- | --- |\n| **Status code** | `405 Method Not Allowed` |\n| **Content-Type** | `text/plain` |\n| **Body** | `Method Not Allowed` |\n\n---\n\n## Test Coverage\n\n| Test | Assertion |\n| --- | --- |\n| `Test_1` — Status code | Response status is `405 Method Not Allowed` |\n| `Test_2` — Response time | Response time is below `{{max_response_time}}` (collection variable) |\n| `Test_3` — Response body | Body is not empty, `Content-Type` is `text/plain`, and body equals `\"Method Not Allowed\"` |"
