@@ -274,6 +274,17 @@ Issue: `update_booking_expired_token_mocked` fails with "expected N to be below 
     CI retries this step once automatically; locally, just re-run the collection.
 
 
+## On authorship
+
+This project's content was written with Claude Code as an assistant, including the Postman
+collections themselves (requests, test scripts, per-request descriptions), the CI workflow,
+and the Dockerfile. The design decisions - what to test, which negative/edge cases were worth
+covering, diagnosing and fixing the real bugs found along the way (a Postman variable-scoping
+gotcha that corrupted shared state between requests, assertions that expected behavior the API
+never actually sends), and what to wire into CI versus leave as a documented known issue - were
+mine throughout.
+
+
 ## Contact
 - Anastasiia Zatorska
 - Email: teranastasi9@gmail.com
