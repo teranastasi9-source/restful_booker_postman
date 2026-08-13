@@ -131,7 +131,7 @@ restful_booker_postman/
     Then I receive 403 Forbidden
 
     When I retrieve the booking by ID
-    Then all booking details remain unchange
+    Then all booking details remain unchanged
 
     When I partially update the booking (PATCH with token)
     Then only firstname is updated
@@ -253,6 +253,9 @@ a "don't let this go unnoticed" safety net.
 green end-to-end - see git history for the fixes involved), unlike `IntegrationWorkflows_07`
 which was always the CI-verified one. Both now run in CI as of 2026-08-10, verified directly
 against the live API repeatedly beforehand: 170/170 assertions passing consistently.
+
+The **Assertions** badge at the top of this README is the combined total across both
+collections (`IntegrationWorkflows_07` + `Individual_collections_01_06`), not just one of them.
 
 
 ## Troubleshooting

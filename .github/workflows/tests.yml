@@ -69,8 +69,9 @@ jobs:
         run: |
           for attempt in 1 2; do
             if newman run RESTful_Booker.Individual_collections_01_06.json \
-              -r htmlextra \
+              -r htmlextra,json \
               --reporter-htmlextra-export test_reports/report_Individual_collections_01_06.html \
+              --reporter-json-export test_reports/report_Individual_collections_01_06.json \
               --timeout 15000 \
               --delay-request 200; then
               break
@@ -82,14 +83,20 @@ jobs:
             fi
           done
       - name: Update assertions badge
-        # Dynamic instead of hand-maintained - reads the assertion count straight out of the
-        # JSON reporter output from the integration-workflow run above (no extra API calls).
-        # Only commits back when the count actually changed, and [skip ci] on that commit
-        # avoids re-triggering this whole workflow on its own badge-update push. Same pattern
-        # as the playwright_ui_automation and restful_booker_automation sibling projects.
+        # Dynamic instead of hand-maintained - reads the assertion counts straight out of the
+        # JSON reporter output from both collections' runs above (no extra API calls) and sums
+        # them. Was IntegrationWorkflows_07 alone until 2026-08-13: the badge label is generic
+        # ("assertions"), not scoped to one collection, so it needs to reflect the full test
+        # suite - not just the 214 from one of the two collections while the README separately
+        # cites 170/170 for the other. Only commits back when the count actually changed, and
+        # [skip ci] on that commit avoids re-triggering this whole workflow on its own
+        # badge-update push. Same pattern as the playwright_ui_automation and
+        # restful_booker_automation sibling projects.
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          COUNT=$(jq '.run.stats.assertions.total' test_reports/report_IntegrationWorkflows_07.json)
+          WORKFLOWS_COUNT=$(jq '.run.stats.assertions.total' test_reports/report_IntegrationWorkflows_07.json)
+          INDIVIDUAL_COUNT=$(jq '.run.stats.assertions.total' test_reports/report_Individual_collections_01_06.json)
+          COUNT=$((WORKFLOWS_COUNT + INDIVIDUAL_COUNT))
           mkdir -p .github/badges
           echo "{\"schemaVersion\":1,\"label\":\"assertions\",\"message\":\"$COUNT\",\"color\":\"brightgreen\"}" > .github/badges/assertions.json
           if ! git diff --quiet -- .github/badges/assertions.json; then
