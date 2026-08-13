@@ -320,9 +320,91 @@
             "description": "# Auth - CreateToken (Missing Password)\n\nThis request attempts to authenticate against the RESTful Booker API with only a `username` field — the `password` field is intentionally omitted from the request body. The API returns `200 OK` even in this case, but instead of a token, the response contains a `reason` field with the value `\"Bad credentials\"`. The `token` collection variable is cleared (set to empty string) to prevent stale tokens from being used in subsequent requests.\n\n---\n\n## Endpoint\n\n```\nPOST {{base_url}}/auth\n\n ```\n\n---\n\n## Authentication\n\nNo authentication is required for this request.\n\n---\n\n## Request Headers\n\n| Header | Value |\n| --- | --- |\n| `Content-Type` | `application/json` |\n\n---\n\n## Request Body\n\nThe request body contains only the `username` field. The `password` field is **intentionally missing** to test the API's handling of incomplete credentials.\n\n``` json\n{\n  \"username\": \"{{valid_username}}\"\n}\n\n ```\n\n| Field | Type | Variable | Description |\n| --- | --- | --- | --- |\n| `username` | string | `{{valid_username}}` | A valid username — but authentication still fails due to the missing password |\n| `password` | — | _(omitted)_ | Intentionally not included in the request body |\n\n---\n\n## Response\n\n### 200 OK\n\nDespite the missing `password` field, the API returns `200 OK`. The response body contains a single `reason` field instead of a token.\n\n``` json\n{\n  \"reason\": \"Bad credentials\"\n}\n\n ```\n\n| Field | Type | Description |\n| --- | --- | --- |\n| `reason` | string | Explains why authentication failed. Value is `\"Bad credentials\"` when the password is missing |\n\n---\n\n## Variables\n\nUpon receiving the response, the `token` collection variable is **cleared** (set to an empty string) to ensure no stale token from a previous successful authentication is accidentally used in subsequent requests.\n\n---\n\n## Notes\n\n- The API does **not** return a `4xx` error for a missing password — it always returns `200 OK`.\n    \n- Even a valid `username` is not sufficient — both fields are required for successful authentication.\n    \n- Response time is validated against the `max_response_time` collection variable.\n    \n- The response body is validated to be a JSON object with exactly one key: `reason`.\n    \n\n---\n\n## Automated Tests\n\n| Test | Description |\n| --- | --- |\n| **Test_1** | Asserts the response status code is `200 OK` (API returns 200 even for missing password) |\n| **Test_2** | Asserts the response time is below the `{{max_response_time}}` collection variable value |\n| **Test_3** | Asserts the response body is a JSON object with exactly one key: `reason` |\n| **Test_4** | Asserts the `reason` property is a string with value `\"Bad credentials\"` |\n| **Test_5** | Clears the `token` collection variable by setting it to an empty string, ensuring no stale token is used in subsequent requests |"
           },
           "response": []
+        },
+        {
+          "name": "create_token_missing_username",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Parse response body once for reuse\r",
+                  "const resBody = pm.response.json();\r",
+                  "\r",
+                  "pm.test(\"Test_1. Status code is 200 (API returns 200 even for invalid creadentials)\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Test_2. Response time is below max_response_time\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.collectionVariables.get(\"max_response_time\")));\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Test_3. Response body is JSON\", function () {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.contain(\"application/json\");\r",
+                  "    pm.expect(resBody).to.be.an('object');\r",
+                  "    pm.expect(Object.keys(resBody)).to.have.length(1);\r",
+                  "    pm.expect(Object.keys(resBody)).to.eql(['reason']);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Test_4. Response body contains 'reason' property\", function () {\r",
+                  "    pm.expect(resBody).to.have.property(\"reason\");\r",
+                  "    pm.expect(resBody.reason).to.be.a(\"string\");\r",
+                  "    pm.expect(resBody.reason).to.eql(\"Bad credentials\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"password\": \"{{valid_password}}\"\r\n    // Missing username\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/auth",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth"
+              ]
+            },
+            "description": "# Auth - CreateToken (Missing Username)\n\nThe `username`-counterpart to `create_token_missing_password`. This request attempts to authenticate against the RESTful Booker API with only a `password` field - the `username` field is intentionally omitted from the request body. Verified directly (2026-08-14): the API returns `200 OK` even in this case, with the identical `{\"reason\": \"Bad credentials\"}` response body as the missing-password case.\n\n---\n\n## Endpoint\n\n```\nPOST {{base_url}}/auth\n\n ```\n\n---\n\n## Request Body\n\n``` json\n{\n  \"password\": \"{{valid_password}}\"\n}\n\n ```\n\n---\n\n## Response\n\n### 200 OK\n\n``` json\n{\n  \"reason\": \"Bad credentials\"\n}\n\n ```\n\n---\n\n## Automated Tests\n\n| Test | Description |\n| --- | --- |\n| **Test_1** | Asserts the response status code is `200 OK` |\n| **Test_2** | Asserts the response time is below the `{{max_response_time}}` collection variable value |\n| **Test_3** | Asserts the response body is a JSON object with exactly one key: `reason` |\n| **Test_4** | Asserts the `reason` property is a string with value `\"Bad credentials\"` |"
+          },
+          "response": []
         }
       ],
-      "description": "## Overview\n\nThis folder covers the authentication endpoint (`POST /auth`) of the RESTful Booker API. Its purpose is to obtain a session token using valid credentials. The token is required to perform protected operations — specifically **updating** (`PUT`, `PATCH`) and **deleting** (`DELETE`) bookings under `/booking/:id`.\n\nIn addition to the happy-path token creation, this folder includes **negative test cases** that verify the API's behavior when invalid or incomplete credentials are submitted.\n\n---\n\n## Endpoint\n\n| Method | Endpoint |\n|--------|----------|\n| `POST` | `{{restful-booker_url}}/auth` |\n\n---\n\n## Requests in this Folder\n\n| # | Name | Scenario | Expected Outcome |\n|---|------|----------|------------------|\n| 1 | `create_token_valid_user_and_password` | Valid credentials | `200 OK` — returns `{\"token\": \"...\"}`, saved to `{{token}}` collection variable |\n| 2 | `create_token_invalid_user_and_password` | Invalid username & password | `200 OK` — returns `{\"reason\": \"Bad credentials\"}`, `{{token}}` is cleared |\n| 3 | `create_token_missing_password` | Missing password field | `200 OK` — returns `{\"reason\": \"Bad credentials\"}`, `{{token}}` is cleared |\n\n---\n\n## Token Usage\n\nThe token obtained from `create_token_valid_user_and_password` is stored in the `{{token}}` collection variable and passed as a `Cookie` header in the following protected endpoints:\n\n```\nCookie: token={{token}}\n```\n\n| Endpoint | Operation |\n|----------|-----------|\n| `PUT /booking/:id` | Full update of an existing booking |\n| `PATCH /booking/:id` | Partial update of an existing booking |\n| `DELETE /booking/:id` | Delete an existing booking |\n\n---\n\n## API Behavior Notes\n\n- The `/auth` endpoint **always returns `200 OK`** — even for invalid or incomplete credentials. No `4xx` errors are returned for authentication failures.\n- Failed authentication returns `{\"reason\": \"Bad credentials\"}` in the response body instead of a token.\n- On failed auth attempts, the `{{token}}` collection variable is **cleared** (set to an empty string) to prevent stale tokens from being used in subsequent requests.\n- Response time is validated against the `{{max_response_time}}` collection variable in all requests within this folder."
+      "description": "## Overview\n\nThis folder covers the authentication endpoint (`POST /auth`) of the RESTful Booker API. Its purpose is to obtain a session token using valid credentials. The token is required to perform protected operations — specifically **updating** (`PUT`, `PATCH`) and **deleting** (`DELETE`) bookings under `/booking/:id`.\n\nIn addition to the happy-path token creation, this folder includes **negative test cases** that verify the API's behavior when invalid or incomplete credentials are submitted.\n\n---\n\n## Endpoint\n\n| Method | Endpoint |\n|--------|----------|\n| `POST` | `{{restful-booker_url}}/auth` |\n\n---\n\n## Requests in this Folder\n\n| # | Name | Scenario | Expected Outcome |\n|---|------|----------|------------------|\n| 1 | `create_token_valid_user_and_password` | Valid credentials | `200 OK` — returns `{\"token\": \"...\"}`, saved to `{{token}}` collection variable |\n| 2 | `create_token_invalid_user_and_password` | Invalid username & password | `200 OK` — returns `{\"reason\": \"Bad credentials\"}`, `{{token}}` is cleared |\n| 3 | `create_token_missing_password` | Missing password field | `200 OK` — returns `{\"reason\": \"Bad credentials\"}`, `{{token}}` is cleared |\n| 4 | `create_token_missing_username` | Missing username field | `200 OK` — returns `{\"reason\": \"Bad credentials\"}` (verified 2026-08-14 to match the missing-password case) |\n\n---\n\n## Token Usage\n\nThe token obtained from `create_token_valid_user_and_password` is stored in the `{{token}}` collection variable and passed as a `Cookie` header in the following protected endpoints:\n\n```\nCookie: token={{token}}\n```\n\n| Endpoint | Operation |\n|----------|-----------|\n| `PUT /booking/:id` | Full update of an existing booking |\n| `PATCH /booking/:id` | Partial update of an existing booking |\n| `DELETE /booking/:id` | Delete an existing booking |\n\n---\n\n## API Behavior Notes\n\n- The `/auth` endpoint **always returns `200 OK`** — even for invalid or incomplete credentials. No `4xx` errors are returned for authentication failures.\n- Failed authentication returns `{\"reason\": \"Bad credentials\"}` in the response body instead of a token.\n- On failed auth attempts, the `{{token}}` collection variable is **cleared** (set to an empty string) to prevent stale tokens from being used in subsequent requests.\n- Response time is validated against the `{{max_response_time}}` collection variable in all requests within this folder."
     },
     {
       "name": "03_Booking - Read Operations",
@@ -3049,9 +3131,148 @@
             "description": "# PartialUpdateBooking — Invalid Booking Id (Negative Test)\n\nThis is a **negative test** that verifies the API correctly rejects a `PATCH` request made with an **invalid (non-existent) booking ID** (`999999`).\n\nThe RESTful Booker API does not support `PATCH` on a non-existent resource and returns `405 Method Not Allowed` in this scenario.\n\n---\n\n## Request Details\n\n| Property | Value |\n| --- | --- |\n| Method | `PATCH` |\n| Endpoint | `{{base_url}}/booking/{{bookingid}}` |\n| Auth | Cookie token (`token={{token}}`) |\n| Content-Type | `application/json` |\n\n### Body\n\n``` json\n{\n    \"firstname\": \"{{partial_updated_firstname}}\"\n}\n\n ```\n\n---\n\n## Variables\n\n| Variable | Scope | Description |\n| --- | --- | --- |\n| `base_url` | Collection | Base URL of the RESTful Booker API |\n| `bookingid` | Local (pre-request) | Hardcoded to `999999` (invalid ID) to trigger error |\n| `token` | Collection | Auth token obtained from the `/auth` endpoint |\n| `partial_updated_firstname` | Collection | First name value used in the partial update body |\n| `max_response_time` | Collection | Maximum acceptable response time in milliseconds |\n\n---\n\n## Pre-request Script\n\n- Sets `bookingid` to `999999` to simulate a request against a non-existent booking.\n    \n- Generates a random `updated_lastname` value (stored as a local variable for potential reuse).\n    \n\n---\n\n## Tests\n\n| Test | Assertion |\n| --- | --- |\n| `Test_1` | Response status is `405 Method Not Allowed` |\n| `Test_2` | Response time is below `max_response_time` |\n| `Test_3` | Response `Content-Type` is `text/plain`; body is not empty and equals `\"Method Not Allowed\"` |\n\n---\n\n## Expected Response\n\n- **Status:** `405 Method Not Allowed`\n    \n- **Content-Type:** `text/plain`\n    \n- **Body:** `Method Not Allowed`"
           },
           "response": []
+        },
+        {
+          "name": "update_booking_invalid_date_format",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// STEP 1: Ensure there is booking ID and token\r",
+                  "pm.test(\"Prerequisites: booking_id and token are set\", function () {\r",
+                  "    pm.expect(pm.collectionVariables.get(\"bookingid\")).to.not.be.undefined;\r",
+                  "    pm.expect(pm.collectionVariables.get(\"token\")).to.not.be.undefined;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Parse response body once for reuse\r",
+                  "const resBody = pm.response.json();\r",
+                  "\r",
+                  "// Load generated/hardcoded values - a full PUT resends every field, so only\r",
+                  "// bookingdates is expected to misbehave here, everything else is a plain echo\r",
+                  "const expectedResBody = {\r",
+                  "    firstname: pm.collectionVariables.get(\"firstname\"),\r",
+                  "    lastname: pm.collectionVariables.get(\"lastname\"),\r",
+                  "    totalprice: parseInt(pm.collectionVariables.get(\"totalprice\")),\r",
+                  "    depositpaid: pm.collectionVariables.get(\"depositpaid\"),\r",
+                  "    additionalneeds: pm.collectionVariables.get(\"additionalneeds\")\r",
+                  "};\r",
+                  "\r",
+                  "pm.test(\"Test_1. Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Test_2. Response time is below max_response_time\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(parseInt(pm.collectionVariables.get(\"max_response_time\")));\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Test_3. Response body is JSON\", function () {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.contain(\"application/json\");\r",
+                  "    pm.expect(resBody).to.be.an('object');\r",
+                  "    pm.expect(Object.keys(resBody)).to.have.length(6);\r",
+                  "    pm.expect(Object.keys(resBody)).to.eql(['firstname', 'lastname', 'totalprice', 'depositpaid', 'bookingdates', 'additionalneeds']);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Test_4. Response body contains 'firstname' with not updated value\", function () {\r",
+                  "    pm.expect(resBody).to.have.property(\"firstname\");\r",
+                  "    pm.expect(resBody.firstname).to.eql(expectedResBody.firstname);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Test_5. Response body contains 'lastname' with not updated value\", function () {\r",
+                  "    pm.expect(resBody).to.have.property(\"lastname\");\r",
+                  "    pm.expect(resBody.lastname).to.eql(expectedResBody.lastname);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Test_6. Response body contains 'totalprice' with not updated value\", function () {\r",
+                  "    pm.expect(resBody).to.have.property(\"totalprice\");\r",
+                  "    pm.expect(resBody.totalprice).to.eql(expectedResBody.totalprice);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Test_7. Response body contains 'depositpaid' with not updated value\", function () {\r",
+                  "    pm.expect(resBody).to.have.property(\"depositpaid\");\r",
+                  "    pm.expect(resBody.depositpaid).to.eql(expectedResBody.depositpaid);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Test_8. Response body contains 'bookingdates' property\", function () {\r",
+                  "    pm.expect(resBody).to.have.property(\"bookingdates\");\r",
+                  "    pm.expect(resBody.bookingdates).to.be.an('object');\r",
+                  "    pm.expect(Object.keys(resBody.bookingdates)).to.have.length(2);\r",
+                  "    pm.expect(Object.keys(resBody.bookingdates)).to.eql(['checkin', 'checkout']);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Test_9. API does not validate date format (known bug, see description) - reinterprets '12/02/2026' as '2026-12-02' instead of rejecting or preserving it\", function () {\r",
+                  "    pm.expect(resBody.bookingdates).to.have.property(\"checkin\");\r",
+                  "    pm.expect(resBody.bookingdates.checkin).to.eql(\"2026-12-02\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Test_10. API does not validate date format (known bug, see description) - garbles '15/02/2026' into an invalid date string instead of rejecting or preserving it\", function () {\r",
+                  "    pm.expect(resBody.bookingdates).to.have.property(\"checkout\");\r",
+                  "    pm.expect(resBody.bookingdates.checkout).to.eql(\"0NaN-aN-aN\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Test_11. 'additionalneeds' property contains not updated value\", function () {\r",
+                  "    pm.expect(resBody).to.have.property(\"additionalneeds\");\r",
+                  "    pm.expect(resBody.additionalneeds).to.equal(expectedResBody.additionalneeds);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "token={{token}}",
+                "description": "Sets an authorization token to access the PUT endpoint, can be used as an alternative to the Authorization.",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"firstname\": \"{{firstname}}\",\r\n    \"lastname\": \"{{lastname}}\",\r\n    \"totalprice\": {{totalprice}},\r\n    \"depositpaid\": {{depositpaid}},\r\n    \"bookingdates\": {\r\n        \"checkin\": \"12/02/2026\",\r\n        \"checkout\": \"15/02/2026\"\r\n    },\r\n    \"additionalneeds\": \"{{additionalneeds}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/booking/{{bookingid}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "booking",
+                "{{bookingid}}"
+              ]
+            },
+            "description": "# UpdateBooking (Invalid date format)\n\nThis is a **negative test** for the `PUT /booking/:id` endpoint - the PUT counterpart to `partial_update_booking_invalid_date_format`. It submits booking dates in an **invalid format** (`DD/MM/YYYY` instead of the required `YYYY-MM-DD`) and verifies how the API handles the malformed input.\n\nDespite the invalid date format, the RESTful Booker API currently returns **200 OK** - and (verified directly, 2026-08-14) mangles the dates identically to how the PATCH endpoint does: this request documents and validates that (potentially unexpected) behaviour for PUT specifically.\n\nDeliberately placed **last** in this folder, after every other request that depends on this booking's `bookingdates` still being pristine (e.g. `partial_update_booking_valid`'s own \"unchanged\" assertions) - this request permanently corrupts those dates on the shared record, same as `partial_update_booking_invalid_date_format` already does for PATCH.\n\n---\n\n## Endpoint\n\n`PUT {{base_url}}/booking/{{bookingid}}`\n\n---\n\n## Purpose\n\n- Verify API behaviour when `checkin` and `checkout` dates are submitted in an incorrect format (`DD/MM/YYYY`) on a full update.\n- Confirm every other field is a plain echo of what was sent (a PUT resends the whole record, unlike PATCH).\n- Assert the exact, verified values the API actually returns for this malformed input, documenting its lack of input validation on date fields directly rather than leaving this test permanently red.\n\n---\n\n## Authentication\n\nUses a session token passed via the `Cookie` header:\n\n```\nCookie: token={{token}}\n```\n\nThe `{{token}}` variable must be set before this request runs (e.g. by executing `create_token_valid_user_and_password` first).\n\n---\n\n## Expected Response (200 OK)\n\n```json\n{\n    \"firstname\": \"{{firstname}}\",\n    \"lastname\": \"{{lastname}}\",\n    \"totalprice\": {{totalprice}},\n    \"depositpaid\": {{depositpaid}},\n    \"bookingdates\": {\n        \"checkin\": \"2026-12-02\",\n        \"checkout\": \"0NaN-aN-aN\"\n    },\n    \"additionalneeds\": \"{{additionalneeds}}\"\n}\n```"
+          },
+          "response": []
         }
       ],
-      "description": "## Overview\n\nThis folder covers test scenarios for the **Update Booking** (`PUT /booking/:id`) and **Partial Update Booking** (`PATCH /booking/:id`) endpoints of the RESTful Booker API.\n\nIt validates both the **happy path** and a range of **negative/edge cases**, organized as follows:\n\n**PUT – Full Update**\n\n- `update_booking_valid` — Full update with a valid auth token; verifies all fields are correctly updated in the response.\n    \n- `update_booking_cookie_header_disabled` — Verifies that a request without the Cookie auth header is rejected.\n    \n- `update_booking_expired_token` — Verifies that an expired token results in a `403 Forbidden` response.\n    \n- `update_booking_invalid_token` — Verifies that an invalid/random token is rejected with `403 Forbidden`.\n    \n- `update_booking_invalid_id` — Verifies that attempting to update a non-existent booking ID returns the appropriate error.\n    \n\n**PATCH – Partial Update**\n\n- `partial_update_booking_valid` — Partial update (firstname only) with a valid token; verifies only the targeted field is changed.\n    \n- `partial_update_booking_cookie_header_disabled` — Verifies that a PATCH request without auth is rejected.\n    \n- `partial_update_booking_expired_token` — Verifies that an expired token results in a `403 Forbidden` response.\n    \n- `partial_update_booking_invalid_token` — Verifies that an invalid token is rejected with `403 Forbidden`.\n    \n- `partial_update_booking_invalid_date_format` — Verifies that submitting booking dates in an incorrect format returns an error.\n    \n- `partial_update_booking_invalid_id` — Verifies that a PATCH request to a non-existent booking ID returns the appropriate error.\n    \n\nAuthentication is handled via the `Cookie: token={{token}}` header. Pre-request scripts generate dynamic test data (e.g. random names), and test scripts assert status codes, response structure, and field-level correctness."
+      "description": "## Overview\n\nThis folder covers test scenarios for the **Update Booking** (`PUT /booking/:id`) and **Partial Update Booking** (`PATCH /booking/:id`) endpoints of the RESTful Booker API.\n\nIt validates both the **happy path** and a range of **negative/edge cases**, organized as follows:\n\n**PUT – Full Update**\n\n- `update_booking_valid` — Full update with a valid auth token; verifies all fields are correctly updated in the response.\n    \n- `update_booking_cookie_header_disabled` — Verifies that a request without the Cookie auth header is rejected.\n    \n- `update_booking_expired_token` — Verifies that an expired token results in a `403 Forbidden` response.\n    \n- `update_booking_invalid_token` — Verifies that an invalid/random token is rejected with `403 Forbidden`.\n    \n- `update_booking_invalid_id` — Verifies that attempting to update a non-existent booking ID returns the appropriate error.\n    \n- `update_booking_invalid_date_format` — The PUT counterpart to `partial_update_booking_invalid_date_format` below; verifies (and documents) the same date-mangling behaviour on a full update. Deliberately run last in this folder since it permanently corrupts the shared booking's dates.\n    \n\n**PATCH – Partial Update**\n\n- `partial_update_booking_valid` — Partial update (firstname only) with a valid token; verifies only the targeted field is changed.\n    \n- `partial_update_booking_cookie_header_disabled` — Verifies that a PATCH request without auth is rejected.\n    \n- `partial_update_booking_expired_token` — Verifies that an expired token results in a `403 Forbidden` response.\n    \n- `partial_update_booking_invalid_token` — Verifies that an invalid token is rejected with `403 Forbidden`.\n    \n- `partial_update_booking_invalid_date_format` — Verifies that submitting booking dates in an incorrect format returns an error.\n    \n- `partial_update_booking_invalid_id` — Verifies that a PATCH request to a non-existent booking ID returns the appropriate error.\n    \n\nAuthentication is handled via the `Cookie: token={{token}}` header. Pre-request scripts generate dynamic test data (e.g. random names), and test scripts assert status codes, response structure, and field-level correctness."
     },
     {
       "name": "06_Delete Operations",
