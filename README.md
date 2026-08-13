@@ -243,9 +243,10 @@ running anything - open either directly in a browser.
 ## CI
 
 Runs both collections on every push/PR, plus a weekly (Monday) scheduled run and manual
-`workflow_dispatch` (see `.github/workflows/tests.yml`). Each Newman step retries once
-automatically on its own (see the known mock-server flake below) - one collection's retry
-doesn't affect the other's. If the **scheduled** run still fails after that, a GitHub Issue
+`workflow_dispatch` (see `.github/workflows/tests.yml`). Each Newman step retries automatically
+on its own, up to 3 attempts total (see the known mock-server flake and "callback timed out"
+issue below) - one collection's retries don't affect the other's. If the **scheduled** run
+still fails after that, a GitHub Issue
 is opened automatically (push/PR/manual runs are already being watched live, so they don't) -
 a "don't let this go unnoticed" safety net.
 
@@ -262,19 +263,24 @@ collections (`IntegrationWorkflows_07` + `Individual_collections_01_06`), not ju
 Issue: "newman: command not found"
   → Run: npm install -g newman newman-reporter-htmlextra
 
-Issue: "callback timed out" (Newman exits 1, but the HTML report still looks complete)
-  → Verified 2026-08-10: reproducible locally on Windows whenever `-r htmlextra` is used
-    (with or without `cli` alongside it, in Docker or directly via `npx newman`), even on a
-    run where every single assertion actually passed - looks like a trailing async-cleanup
-    quirk specific to this reporter/environment combination, not a real request timeout.
-    The actual CI (GitHub Actions, ubuntu-latest, fresh npm install) does not reproduce this
-    - check the report/summary output itself before assuming a real failure.
+Issue: "callback timed out" (Newman exits 1)
+  → Verified 2026-08-13 (superseding an earlier, narrower 2026-08-10 finding): this isn't a
+    reporter quirk - it reproduces with `-r json` alone, no `htmlextra` involved - and isn't
+    tied to a specific Newman version (reproduces on both 6.1.3 and 6.2.2). It's an
+    intermittent hang against the live `restful-booker.herokuapp.com` instance itself, same
+    class of external flakiness as the mock-server latency spike below. It also reproduced on
+    a real CI `workflow_dispatch` run that day (failing twice back-to-back), unlike what was
+    verified 2026-08-10 - CI is not immune to this, just less exposed to it. Each collection's
+    CI step now retries up to 3 times total (bumped from 2 that day) as a result.
+    Locally: just re-run the collection; if the HTML report still looks complete despite the
+    exit code, every assertion did in fact pass - check the report/summary output before
+    assuming a real failure.
 
 Issue: `update_booking_expired_token_mocked` fails with "expected N to be below 1000"
   → Postman's own mock server (`restful_booker_mocked`) occasionally responds slowly -
     verified 2026-08-03 that a failure here was a one-off latency spike, not a real
     regression (the very next run passed 214/214 with response times back under 900ms).
-    CI retries this step once automatically; locally, just re-run the collection.
+    CI retries this step up to 2 more times automatically; locally, just re-run the collection.
 
 
 ## On authorship
