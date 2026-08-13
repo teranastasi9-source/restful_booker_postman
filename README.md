@@ -265,7 +265,8 @@ a "don't let this go unnoticed" safety net.
 `Individual_collections_01_06.json` was historically excluded from CI (it wasn't reliably
 green end-to-end - see git history for the fixes involved), unlike `IntegrationWorkflows_07`
 which was always the CI-verified one. Both now run in CI as of 2026-08-10, verified directly
-against the live API repeatedly beforehand: 170/170 assertions passing consistently.
+against the live API repeatedly beforehand: 170/170 assertions passing consistently at the
+time (now 186/186, after two more requests were added 2026-08-14).
 
 The **Assertions** badge at the top of this README is the combined total across both
 collections (`IntegrationWorkflows_07` + `Individual_collections_01_06`), not just one of them.
@@ -287,6 +288,16 @@ Issue: "callback timed out" (Newman exits 1)
     Locally: just re-run the collection; if the HTML report still looks complete despite the
     exit code, every assertion did in fact pass - check the report/summary output before
     assuming a real failure.
+
+Issue: the committed `report_Individual_collections_01_06.html`'s own "Total Assertions" tile
+shows a lower number than the `assertions` badge implies for this collection
+  → Verified 2026-08-14, reproduced 3 times: this is a real `newman-reporter-htmlextra` display
+    bug, not a stale/wrongly-regenerated report. The `htmlextra` reporter's own summary tile
+    consistently undercounts by 2 versus the actual run (confirmed via a parallel `-r json` run
+    against the exact same collection execution - the JSON reporter's `stats.assertions.total`,
+    which is what both CI's assertions badge and this section's counts are based on, is
+    accurate). Regenerating the HTML report doesn't fix this - the shortfall is reproducible
+    every time. Trust the badge/JSON total over the HTML report's own self-reported tally.
 
 Issue: `update_booking_expired_token_mocked` fails with "expected N to be below 1000"
   → Postman's own mock server (`restful_booker_mocked`) occasionally responds slowly -

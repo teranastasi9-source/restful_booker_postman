@@ -69,7 +69,8 @@ jobs:
         # Same retry policy as the workflow collection above, for the same reason - both hit
         # the same shared, public restful-booker.herokuapp.com instance and are subject to the
         # same occasional latency/hang blips (including Newman's own "callback timed out" - see
-        # comment above). Verified directly (2026-08-10): 170/170 assertions pass consistently
+        # comment above). Verified directly (2026-08-10, originally 170/170; re-verified
+        # 2026-08-14 after adding two more requests: 186/186): assertions pass consistently
         # across repeated runs, so a retry here is a safety net for shared-API noise, not a mask
         # for a flaky test.
         run: |
@@ -94,7 +95,7 @@ jobs:
         # them. Was IntegrationWorkflows_07 alone until 2026-08-13: the badge label is generic
         # ("assertions"), not scoped to one collection, so it needs to reflect the full test
         # suite - not just the 214 from one of the two collections while the README separately
-        # cites 170/170 for the other. Only commits back when the count actually changed, and
+        # cites the other's own total. Only commits back when the count actually changed, and
         # [skip ci] on that commit avoids re-triggering this whole workflow on its own
         # badge-update push. Same pattern as the playwright_ui_automation and
         # restful_booker_automation sibling projects.
