@@ -68,13 +68,13 @@ restful_booker_postman/
 ## Collection structure in Postman
 | Folder| Purpose      |
 |-------|--------------|
-|`01_HealthCheck/`|API availability verification|
-|`02_Authentication/`|Token generation|
-|`03_Booking_Read/`|GET operations|
-|`04_Booking_Create/`|POST operations|
-|`05_Booking_Update/`|PUT/PATCH operations|
-|`06_Booking_Delete/`|DELETE operations|
-|`07_Integration_Workflows/`|Integration tests|
+|`01_Health Check`|API availability verification|
+|`02_Authentication`|Token generation|
+|`03_Booking - Read Operations`|GET operations|
+|`04_Booking - Create Operations`|POST operations|
+|`05_Booking - Update Operations`|PUT/PATCH operations|
+|`06_Delete Operations`|DELETE operations|
+|`07_Integration workflows`|Integration tests|
 
 
 ## Integration Workflows

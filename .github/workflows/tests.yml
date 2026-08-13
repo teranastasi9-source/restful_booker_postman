@@ -28,6 +28,7 @@ jobs:
   test:
     name: Run Postman collection (Newman)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       issues: write
       contents: write
@@ -158,6 +159,7 @@ jobs:
     # "GitHub Actions" (a one-time manual step, not something a workflow file can set).
     if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       pages: write
       id-token: write
