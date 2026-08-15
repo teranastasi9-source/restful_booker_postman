@@ -23,7 +23,7 @@ request/response shapes, required vs. optional fields, and which headers each en
 One concrete example: the docs' own `DeleteBooking` example response is `HTTP/1.1 201 Created`
 (filed under a `Success 200` heading, but the actual example is 201, not the 204 REST convention
 might suggest for a DELETE) - confirmed against a live request, not just assumed - which is why
-`delete_booking_valid` in `06_Booking_Delete/` asserts `201` rather than the more commonly
+`delete_booking_valid` in `06_Delete Operations` asserts `201` rather than the more commonly
 expected `204`.
 
 ## Comparison: Postman vs Python
